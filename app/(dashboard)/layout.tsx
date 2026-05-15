@@ -1,7 +1,8 @@
 'use client';
 
 import { useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
+import Link from 'next/link';
 import { toast } from 'sonner';
 import { useAuthStore } from '../../store/auth.store';
 import { api, ApiError } from '../../lib/api';
@@ -10,6 +11,12 @@ import { UserSchema } from '../../lib/schemas';
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   const { user, setUser, setLoading, logout, isLoading } = useAuthStore();
   const router = useRouter();
+  const pathname = usePathname();
+
+  const navLinks = [
+    { href: '/', label: 'Dashboard' },
+    { href: '/games', label: 'Games' },
+  ];
 
   useEffect(() => {
     // Hydrate user from /me on first load
@@ -64,9 +71,30 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       {/* Top nav */}
       <header className="border-b border-gray-800 bg-gray-900">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <span className="text-xl font-bold text-white">FAZN</span>
-            <span className="text-xs text-purple-400 bg-purple-400/10 px-2 py-0.5 rounded-full font-medium">Admin</span>
+          <div className="flex items-center gap-3 sm:gap-6">
+            <div className="flex items-center gap-2">
+              <span className="text-xl font-bold text-white">FAZN</span>
+              <span className="hidden sm:inline text-xs text-purple-400 bg-purple-400/10 px-2 py-0.5 rounded-full font-medium">Admin</span>
+            </div>
+            <nav className="flex items-center gap-1">
+              {navLinks.map((link) => {
+                const isActive =
+                  link.href === '/' ? pathname === '/' : pathname.startsWith(link.href);
+                return (
+                  <Link
+                    key={link.href}
+                    href={link.href}
+                    className={`text-sm px-3 py-1.5 rounded-lg transition-colors ${
+                      isActive
+                        ? 'bg-purple-600/20 text-purple-300 font-medium'
+                        : 'text-gray-400 hover:text-white hover:bg-gray-800'
+                    }`}
+                  >
+                    {link.label}
+                  </Link>
+                );
+              })}
+            </nav>
           </div>
           <div className="flex items-center gap-4">
             {user && (

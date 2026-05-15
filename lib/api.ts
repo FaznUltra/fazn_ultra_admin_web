@@ -1,6 +1,7 @@
 import { z } from 'zod';
 import { getAccessToken, getRefreshToken, saveTokens, clearTokens } from './tokens';
-import { TokenPairSchema } from './schemas';
+import { TokenPairSchema, GameOptionsSchema, GamesListResponseSchema, GameResponseSchema } from './schemas';
+import type { CreateGameInput } from './schemas';
 
 const BASE = process.env.NEXT_PUBLIC_API_BASE_URL ?? 'https://api.fazn.dev';
 
@@ -95,6 +96,18 @@ export const api = {
 
     resetPassword: (body: { email: string; otp: string; newPassword: string }) =>
       request('/api/v1/auth/otp/reset-password', { method: 'POST', body: JSON.stringify(body) }),
+  },
+
+  games: {
+    options: () => request('/api/v1/games/options', { schema: GameOptionsSchema }),
+
+    list: () => request('/api/v1/admin/games', { auth: true, schema: GamesListResponseSchema }).then((r) => r.games),
+
+    create: (body: CreateGameInput) =>
+      request('/api/v1/admin/games', { method: 'POST', auth: true, body: JSON.stringify(body), schema: GameResponseSchema }).then((r) => r.game),
+
+    toggle: (id: string, active: boolean) =>
+      request(`/api/v1/admin/games/${id}/toggle`, { method: 'PATCH', auth: true, body: JSON.stringify({ active }), schema: GameResponseSchema }).then((r) => r.game),
   },
 };
 

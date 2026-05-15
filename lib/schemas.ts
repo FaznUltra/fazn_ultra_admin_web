@@ -31,5 +31,35 @@ export const ApiErrorSchema = z.object({
   }),
 });
 
+export const GameSchema = z.object({
+  id: z.string(),
+  name: z.string(),
+  slug: z.string(),
+  category: z.string(),
+  platforms: z.array(z.string()),
+  thumbnail_url: z.string().nullable(),
+  score_type: z.enum(['numeric', 'win_loss', 'time']),
+  active: z.boolean(),
+  created_by: z.string().nullable(),
+  created_at: z.string(),
+});
+
+export const GameOptionsSchema = z.object({
+  categories: z.array(z.string()),
+  platforms: z.array(z.string()),
+  scoreTypes: z.array(z.string()),
+});
+
+export const GamesListResponseSchema = z.object({ games: z.array(GameSchema) });
+export const GameResponseSchema = z.object({ game: GameSchema });
+
 export type User = z.infer<typeof UserSchema>;
 export type AuthResponse = z.infer<typeof AuthResponseSchema>;
+export type Game = z.infer<typeof GameSchema>;
+export type GameOptions = z.infer<typeof GameOptionsSchema>;
+export type CreateGameInput = {
+  name: string;
+  category: string;
+  platforms: string[];
+  scoreType: 'numeric' | 'win_loss' | 'time';
+};

@@ -9,6 +9,12 @@ export const api = {
     forgotPassword: jest.fn(),
     resetPassword: jest.fn(),
   },
+  games: {
+    options: jest.fn(),
+    list: jest.fn(),
+    create: jest.fn(),
+    toggle: jest.fn(),
+  },
 };
 
 export class ApiError extends Error {
